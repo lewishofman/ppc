@@ -1,13 +1,17 @@
 #!/bin/bash
+set -euo pipefail
 
-echo "Starting the analyzer..."
+cd /app
 
-# Running the python frequency analyser
-FREQ_RESULT=$(python3 /app/.github/scripts/frequency.py /app/data.txt)
+echo "Executing todo.py"
+python3 /app/.github/scripts/todo.py | tee /app/todo_output.txt
 
-echo "Analysis complete. Updating README..."
+echo "Executing todo-test.py"
+python3 /app/.github/scripts/todo-test.py | tee /app/test_output.txt
 
-# Run the update_readme.sh
-/app/.github/scripts/update_readme.sh "$FREQ_RESULT" "$GITHUB_USER"
+echo "Executing update_index.sh"
+bash /app/.github/scripts/update_index.sh \
+    /app/todo_output.txt \
+    /app/test_output.txt
 
-echo "Process Completed!"
+echo "Done!"
